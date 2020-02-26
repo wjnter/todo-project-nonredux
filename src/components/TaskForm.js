@@ -47,7 +47,6 @@ export class TaskForm extends Component {
   }
 
   render() {
-    const { taskEditing } = this.props;  
     return (
       <div className="card"> 
         <div className="card-header">

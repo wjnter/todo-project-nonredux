@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import './App.css';
+import './App.css';
 import TaskForm from './components/TaskForm';
 import Control from './components/Control';
 import TaskList from './components/TaskList';
@@ -14,7 +14,9 @@ class App extends Component {
       name: '',
       status: -1
     },
-    keyword: ''
+    keyword: '',
+    sortBy: 'name',
+    sortValue: 1 //1 asc -1 desc 
   };
   componentDidMount() {
     if (localStorage && localStorage.getItem('tasks')) {
@@ -115,9 +117,10 @@ class App extends Component {
   // }
 
   onSearch = keyword => this.setState({keyword})
+  onSort = (sortBy, sortValue ) => this.setState({sortBy, sortValue});
 
   render() {
-    let { tasks, isOpenForm, taskEditing, filteredTasks, keyword, filter } = this.state;
+    let { tasks, isOpenForm, taskEditing, keyword, filter, sortBy, sortValue } = this.state;
     const newFilterStatus = +(filter.status) === 1 ? true : false
 
     if (filter) {
@@ -136,6 +139,21 @@ class App extends Component {
       tasks = tasks.filter(task => task.name.toLowerCase().includes(keyword.toLowerCase()))
       console.log(tasks)
     } 
+    if (sortBy === 'name') {
+      tasks.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        if (nameA > nameB) { return sortValue }
+        else if (nameA < nameB ) { return -sortValue}
+        else return 0;
+      });
+    } else if (sortBy === 'status') {
+      tasks.sort((a, b) => {
+        if (a.status > b.status) { return -sortValue }
+        else if (a.status < b.status) { return sortValue }
+        else return 0;
+      })
+    }
 
     return ( 
       <div className="container">
@@ -166,6 +184,7 @@ class App extends Component {
             {/* Search and Sort */}
             <Control 
               onSearch={this.onSearch}
+              onSort={this.onSort}
             />
             <div className="row mt-5">
               <div className="col-12">
